@@ -76,6 +76,7 @@
 <label>Total de parcelas<input id="purchaseParts" type="number" min="2" max="48" required></label>
 <label>Parcela atual / inicial<input id="purchaseStartPart" type="number" min="1" max="48" value="1" required></label>
 <label class="span2">Vencimento da parcela informada<input id="purchaseDate" type="date" required></label>
+<label class="span2">Data original da compra (opcional)<input id="purchaseBoughtDate" type="date"><small class="muted">Informe a data em que passou o cartão, se souber. O vencimento acima é uma data diferente.</small></label>
 <div class="span2 installment-preview" id="purchasePreview" aria-live="polite"></div>
 <label class="span2 purchase-keep hidden" id="purchaseKeepGroup"><input type="checkbox" id="purchaseKeepPast" checked><span><b>Manter lançamentos anteriores</b><small>As parcelas anteriores à inicial escolhida continuam no histórico. Desmarque para removê-las.</small></span></label>
 <div class="span2 controls" style="justify-content:flex-end"><button type="button" class="secondary" data-close>Cancelar</button><button type="submit" class="primary" id="purchaseSubmit">Salvar compra</button></div>
@@ -124,7 +125,7 @@ function chInstallments(total,parts,start,due,name,card,purchaseId){
  const cents=Math.round(total*100),base=Math.floor(cents/parts),extra=cents%parts,planned=[];
  for(let i=start;i<=parts;i++){
   planned.push({id:uid(),date:chMonthOffset(due,i-start),amount:(base+(i-1<extra?1:0))/100,
-   type:'expense',description:`${name} (${i}/${parts}) · ${card}`,category:'Compras parceladas',paymentMethod:'credit',purchaseId,purchasePart:i});
+   type:'expense',description:`${name} (${i}/${parts}) · ${card}`,category:(chCat(name)==='Outros'?'Compras parceladas':chCat(name)),paymentMethod:'credit',purchaseId,purchasePart:i});
  }
  return planned;
 }
@@ -153,6 +154,7 @@ function chOpenPurchase(id){
  $('purchaseStartPart').value=oldStart;
  const matching=p?state.transactions.find(t=>t.purchaseId===p.id&&chPartNum(t)===oldStart):null;
  $('purchaseDate').value=matching?.date||p?.first||today();
+ $('purchaseBoughtDate').value=p?.purchasedOn||'';
  chPurchaseBasePart=oldStart;chPurchaseBaseDate=$('purchaseDate').value;chPurchaseDateEdited=false;
  $('purchaseKeepPast').checked=true;
  $('purchaseKeepGroup').classList.toggle('hidden',!p);
@@ -166,6 +168,8 @@ function chSavePurchase(e){
  const id=$('purchaseId').value, old=state.purchases.find(p=>p.id===id);
  const total=Number($('purchaseTotal').value),parts=Number($('purchaseParts').value),start=Number($('purchaseStartPart').value),first=$('purchaseDate').value;
  const name=$('purchaseName').value.trim(),card=$('purchaseCard').value.trim();
+ const boughtDate=$('purchaseBoughtDate').value;
+ if(boughtDate && (!/^\d{4}-\d{2}-\d{2}$/.test(boughtDate)||Number.isNaN(Date.parse(boughtDate+'T12:00:00'))))return alert('Confira a data original da compra.');
  if(!name||!card||!/^\d{4}-\d{2}-\d{2}$/.test(first)||!Number.isFinite(total)||total<=0||total>100000000||!Number.isInteger(parts)||parts<2||parts>48||!Number.isInteger(start)||start<1||start>parts)return alert('Confira o valor, o vencimento e a numeração das parcelas (ex.: 4 de 10).');
  const keep=!!old&&$('purchaseKeepPast').checked;
  const linked=old?state.transactions.filter(t=>t.purchaseId===old.id):[];
@@ -173,7 +177,7 @@ function chSavePurchase(e){
  const newId=old?.id||uid();
  const planned=chInstallments(total,parts,start,first,name,card,newId);
  if(old&&!confirm(`Ajustar "${name}" para ${start}/${parts}?\n\n${planned.length} parcelas serão previstas a partir de ${first}. ${retained.length} parcela(s) anteriores serão mantidas. ${linked.length-retained.length} lançamento(s) vinculado(s) serão substituídos, inclusive eventuais edições manuais.\n\nFaça backup se precisar conservar o histórico antigo.`))return;
- const updated={id:newId,name,card,total:Math.round(total*100)/100,parts,startPart:start,first};
+ const updated={id:newId,name,card,total:Math.round(total*100)/100,parts,startPart:start,first,...(boughtDate?{purchasedOn:boughtDate}:{})};
  if(old)state.purchases=state.purchases.map(p=>p.id===old.id?updated:p);else state.purchases.push(updated);
  if(old)state.transactions=state.transactions.filter(t=>t.purchaseId!==old.id).concat(retained);
  state.transactions.push(...planned);
@@ -233,13 +237,34 @@ function chDescription(text, amountInfo){
  if(!result||/^(valor|despesa|gasto|pagamento|receita|dinheiro)$/i.test(result))return '';
  return result.slice(0,100).replace(/^./,x=>x.toUpperCase());
 }
+
+// Padronização de estabelecimentos conhecidos sem depender de serviços pagos.
+// O histórico original permanece intacto; o relatório mostra a marca e a categoria.
+const chMerchants=[
+ {name:"McDonald's",re:/\b(?:mc\s*donald'?s?|mcdonalds|mequi|m[eé]qui)\b/,cat:'Alimentação'},
+ {name:'Burger King',re:/\b(?:burger\s*king|bk)\b/,cat:'Alimentação'},
+ {name:'Subway',re:/\bsubway\b/,cat:'Alimentação'},
+ {name:'Habib’s',re:/\bhabib'?s\b/,cat:'Alimentação'},
+ {name:'iFood',re:/\bifood\b/,cat:'Alimentação'},
+ {name:'Starbucks',re:/\bstarbucks\b/,cat:'Alimentação'},
+ {name:'Outback',re:/\boutback\b/,cat:'Alimentação'},
+ {name:'Domino’s',re:/\bdomino'?s\b/,cat:'Alimentação'},
+ {name:'KFC',re:/\bkfc\b/,cat:'Alimentação'},
+ {name:'Bob’s',re:/\bbob'?s\b/,cat:'Alimentação'},
+ {name:'Uber',re:/\buber\b/,cat:'Transporte'},
+ {name:'99',re:/\b99(?:pop)?\b/,cat:'Transporte'},
+ {name:'Spotify',re:/\bspotify\b/,cat:'Assinaturas'},
+ {name:'Netflix',re:/\bnetflix\b/,cat:'Assinaturas'}
+];
+const chMerchant = text=>chMerchants.find(v=>v.re.test(norm(text)))||null;
+
 function chKind(s,inherited) {
  const t=norm(s);
  if(/\b(recebi|ganhei|entrou|caiu|vendi|salario|renda|pix recebido|recebimento|reembolso recebido)\b/.test(t))return 'income';
- if(/\b(gastei|paguei|comprei|custou|uber|99pop|taxi|almoco|jantar|mercado|farmacia|cinema|gasolina|etanol|diesel|combustivel|abasteci|abastecimento|aluguel|despesa|saida|conta|lanchonete|cafe|padaria|internet|transporte|restaurante|luz|compras)\b/.test(t))return 'expense';
+ if(chMerchant(t)||/\b(gastei|paguei|comprei|custou|uber|99pop|taxi|almoco|jantar|mercado|farmacia|cinema|gasolina|etanol|diesel|combustivel|abasteci|abastecimento|aluguel|despesa|saida|conta|lanchonete|cafe|padaria|internet|transporte|restaurante|luz|compras)\b/.test(t))return 'expense';
  return inherited || null;
 }
-function chCat(s){const n=norm(s);if(/\b(?:gasolina|etanol|diesel|combustivel|abastec\w*|posto\s+(?:de\s+)?(?:gasolina|combustiveis))\b/.test(n))return 'Combustível';if(/alimentacao|comida|refeicao/.test(n))return 'Alimentação';if(/transporte|mobilidade/.test(n))return 'Transporte';if(/curso|faculdade|livro|certificac|ingles|estudo|educacao/.test(n))return 'Educação';if(/assinatura|netflix|spotify|streaming/.test(n))return 'Assinaturas';return category(n)}
+function chCat(s){const n=norm(s);const merchant=chMerchant(n);if(merchant)return merchant.cat;if(/\b(?:gasolina|etanol|diesel|combustivel|abastec\w*|posto\s+(?:de\s+)?(?:gasolina|combustiveis))\b/.test(n))return 'Combustível';if(/alimentacao|comida|refeicao/.test(n))return 'Alimentação';if(/transporte|mobilidade/.test(n))return 'Transporte';if(/curso|faculdade|livro|certificac|ingles|estudo|educacao/.test(n))return 'Educação';if(/assinatura|netflix|spotify|streaming/.test(n))return 'Assinaturas';return category(n)}
 function chSplitStatements(text){
  return text.split(/(?:\s+e(?:\s+mais)?\s+|(?:\s*,\s+|\s*;\s*))(?=(?:(?:gastei|paguei|comprei|recebi|ganhei|pix|r\$)\s*)?\d[\d.,]*\b|(?:gastei|paguei|comprei|recebi|ganhei)\b)/i).map(x=>x.trim()).filter(Boolean);
 }
@@ -303,6 +328,8 @@ function chItemsFor(period){return state.transactions.filter(t=>t.date>=period.f
 // categorizados automaticamente como "Transporte" ou "Outros".
 function chEffectiveCategory(t){
  const assigned=String(t.category||'Outros');
+ const merchant=chMerchant(t.description||'');
+ if(t.type==='expense'&&merchant&&['outros','compras','compras parceladas'].includes(norm(assigned)))return merchant.cat;
  if(t.type==='expense'&&['transporte','outros'].includes(norm(assigned))&&/\b(?:gasolina|etanol|diesel|combustivel|abastec\w*|posto\s+(?:de\s+)?(?:gasolina|combustiveis))\b/.test(norm(t.description||'')))return 'Combustível';
  return assigned;
 }
@@ -312,6 +339,45 @@ function chCategoryRequest(s){
  const table=[['Alimentação',/alimentac|comida|almoco|jantar|mercado|restaurante|cafe|lanche|pizza/],['Combustível',/combustiv|gasolina|diesel|etanol|abastec/],['Transporte',/transporte/],['Moradia e contas',/moradia|contas|aluguel|energia|internet|condominio/],['Saúde',/saude|farmacia|academia|medico/],['Educação',/educac|estudos|cursos/],['Lazer',/lazer|cinema|show|viagem/],['Compras',/compras|roupas/],['Assinaturas',/assinaturas|streaming/]];
  return table.find(x=>x[1].test(n))?.[0]||null;
 }
+function chDateBR(value){
+ if(!/^\d{4}-\d{2}-\d{2}$/.test(String(value||'')))return 'Data não informada';
+ return value.slice(8,10)+'/'+value.slice(5,7)+'/'+value.slice(0,4);
+}
+function chDetailList(items,label,period,{credit=false}={}){
+ const sorted=items.slice().sort((a,b)=>b.date.localeCompare(a.date)||b.id.localeCompare(a.id));
+ const total=chCash(items.reduce((sum,t)=>sum+Number(t.amount),0));
+ if(!items.length)return `🧾 ${label} — ${period.name}\n\nNenhum lançamento encontrado nesse período.`;
+ const breakdown=new Map();
+ for(const t of items){const cat=chEffectiveCategory(t);breakdown.set(cat,chCash((breakdown.get(cat)||0)+Number(t.amount)))}
+ const breakdownText=[...breakdown].sort((a,b)=>b[1]-a[1]).map(([c,v])=>`• ${c}: ${money(v)}`).join('\n');
+ const limit=20;
+ const entries=sorted.slice(0,limit).map((t,i)=>{
+  const cat=chEffectiveCategory(t);
+  const merchant=chMerchant(t.description);
+  const label=merchant ? t.description.replace(new RegExp(merchant.re.source,'i'),merchant.name) : t.description;
+  const purchase=t.purchaseId?state.purchases.find(p=>p.id===t.purchaseId):null;
+  const part=t.purchasePart||(t.description.match(/\((\d+)\/(\d+)\)/)||[])[1];
+  const partText=part?` · Parcela ${part}/${purchase?.parts||(t.description.match(/\((\d+)\/(\d+)\)/)||[])[2]||'?'}`:'';
+  const card=purchase?.card||t.card||'';
+  const dateInfo=t.purchaseId
+   ? `Vencimento previsto: ${chDateBR(t.date)}`+(purchase?.purchasedOn?` · Compra: ${chDateBR(purchase.purchasedOn)}`:' · Data original da compra não informada')
+   : `Data: ${chDateBR(t.date)}`;
+  return `${i+1}. ${label}\n   ${money(t.amount)} · ${cat}${partText}${card?` · ${card}`:''}\n   ${dateInfo}`;
+ }).join('\n\n');
+ const extra=sorted.length>limit?`\n\n…mais ${sorted.length-limit} lançamento(s). Veja todos em Lançamentos.`:'';
+ return `🧾 ${label} — ${period.name}\n\nTotal: ${money(total)} (${items.length} ${items.length===1?'lançamento':'lançamentos'})\n\n📂 Por categoria:\n${breakdownText}\n\n📅 Compras registradas:\n${entries}${extra}`+(credit?'\n\nNo crédito, parcelas são mostradas no mês do vencimento previsto; isso não significa que a fatura foi paga.':'')+'\n\nValores conforme os registros do Ch, não um extrato bancário.';
+}
+function chMethodQuestion(s){
+ const n=norm(s);
+ if(!/\b(credito|cartao|debito|pix|dinheiro|fatura)\b/.test(n))return null;
+ if(!/\b(quanto|gastei|gastos|gastou|despesas|compras|comprei|passei|extrato|lancamentos|detalhes|detalhar|mostr[ae]|listar|lista|resumo|fatura|total)\b/.test(n))return null;
+ const method=/\b(debito|cartao de debito)\b/.test(n)?'debit':/\bpix\b/.test(n)?'pix':/\b(dinheiro|especie)\b/.test(n)?'debit':'credit';
+ const p=chPeriod(n);
+ const results=chItemsFor(p).filter(t=>t.type==='expense'&&!chIsBill(t)&&(method==='credit'?chIsCredit(t):method==='pix'?t.paymentMethod==='pix':!chIsCredit(t)&&t.paymentMethod!=='pix'));
+ const label=method==='credit'?'Compras no crédito':method==='pix'?'Pagamentos no Pix':'Compras no débito/dinheiro';
+ return chDetailList(results,label,p,{credit:method==='credit'});
+}
+
 function chSummaryAnswer(s){
  const p=chPeriod(s);const items=chItemsFor(p);
  const pLabel=({'este mês':'Neste mês','mês passado':'No mês passado','hoje':'Hoje','ontem':'Ontem','anteontem':'Anteontem','esta semana':'Nesta semana','semana passada':'Na semana passada'})[p.name]||`Em ${p.name}`;
@@ -321,10 +387,10 @@ function chSummaryAnswer(s){
   const cat=chCategoryRequest(s);
   let chosen=items.filter(t=>t.type==='expense'&&!chIsBill(t));let label=cat||'total de despesas';
   if(cat)chosen=chosen.filter(t=>chEffectiveCategory(t)===cat);
-  // Specific vendors, such as Uber, override category grouping.
-  const vendor=[['Uber',/\buber\b/],['99',/\b99\b/],['Spotify',/\bspotify\b/],['Netflix',/\bnetflix\b/]].find(v=>v[1].test(s));
-  if(vendor){chosen=items.filter(t=>t.type==='expense'&&vendor[1].test(norm(t.description)));label=vendor[0]}
-  return `${pLabel}, você registrou ${money(chCash(chosen.reduce((a,t)=>a+t.amount,0)))} em ${label}. (${chosen.length} lançamento${chosen.length===1?'':'s'})`;
+  // Estabelecimentos conhecidos, mesmo com variações de grafia no histórico.
+  const vendor=chMerchant(s);
+  if(vendor){chosen=items.filter(t=>t.type==='expense'&&!chIsBill(t)&&chMerchant(t.description)?.name===vendor.name);label=vendor.name}
+  return chDetailList(chosen,label==='total de despesas'?'Todas as despesas':`Gastos em ${label}`,p);
  }
  const categoryTotals=new Map();
  for(const t of items.filter(t=>t.type==='expense'&&!chIsBill(t))){
@@ -409,7 +475,8 @@ function chSmartAnswer(original){
    if(entries.length!==1)return 'Para parcelar com segurança, registre cada compra individualmente.';
    const e=entries[0],id=uid(),total=e.amount;
    const installments=chInstallments(total,parts,start,e.date,e.description,card,id);
-   state.purchases.push({id,name:e.description,card,total,parts,startPart:start,first:e.date});
+   const explicitDate=/\b(hoje|ontem|anteontem|20\d{2}[-/]\d{1,2}[-/]\d{1,2}|dia \d{1,2}\/\d{1,2}\/20\d{2})\b/.test(norm(state.messages.slice(-4).filter(m=>m.role==='me').map(m=>m.text).join(' ')));
+   state.purchases.push({id,name:e.description,card,total,parts,startPart:start,first:e.date,...(explicitDate?{purchasedOn:e.date}:{})});
    chSaveEntries(installments);
    return `💳 Compra parcelada: ${e.description} — ${money(total)} (${start}/${parts}, ${card}).\nAs ${installments.length} parcelas previstas vão para o crédito, sem reduzir o saldo em conta. Confira datas e valores em Cartões e parcelas.`;
   }
@@ -419,10 +486,11 @@ function chSmartAnswer(original){
  if(chPending)return chPendingHandle(original);
  if(/^paguei (?:a |minha )?fatura(?: do cartao)?/.test(s)){const a=chParseAmount(original);if(!a)return 'Quanto foi o pagamento da fatura? Ex.: Paguei fatura 400';chPending={kind:'payment',entries:[{type:'expense',amount:a.number,description:'Pagamento de fatura',category:'Pagamento de fatura',date:chDateIn(original)}]};return 'Entendi o pagamento da fatura. Responda “fatura” para confirmar a saída da conta sem duplicar os gastos.';}
  if(/^(oi|ola|e ai|bom dia|boa tarde|boa noite|opa)[!.\s]*$/.test(s))return 'Olá! 💗 Me conta seus gastos, receitas ou me pergunte sobre seu dinheiro. Exemplo: “Gastei 35 no almoço ontem e 28 de Uber hoje”.';
- if(/^(ajuda|comandos|o que voce faz|como funciona|help)/.test(s))return 'Sou o Ch, seu chat financeiro local 💗\n\nVocê pode escrever:\n• Gastei 35 no almoço ontem e 28 de Uber hoje\n• Uber 18,50\n• Recebi 4967 de salário\n• Quanto gastei com Uber este mês?\n• Quais foram meus maiores gastos?\n• Resumo (com gastos separados por categoria)\n• Quanto gastei com gasolina?\n• Resumo do mês passado\n• Últimos lançamentos\n• Corrige o Uber para 32\n• Apaga o último lançamento\n• Mostre minhas metas\n\nPara mudanças importantes, peço confirmação. Sem API de IA: entendo padrões de português, não qualquer frase.';
+ if(/^(ajuda|comandos|o que voce faz|como funciona|help)/.test(s))return 'Sou o Ch, seu chat financeiro local 💗\n\nVocê pode escrever:\n• Gastei 35 no almoço ontem e 28 de Uber hoje\n• Uber 18,50\n• Recebi 4967 de salário\n• Quanto gastei com Uber este mês?\n• Quais foram meus maiores gastos?\n• Resumo (com gastos separados por categoria)\n• Quanto gastei com gasolina?\n• Quanto gastei no crédito? (lista cada compra, categoria, data e parcela)\n• Quanto gastei no McDonalds?\n• Resumo do mês passado\n• Últimos lançamentos\n• Corrige o Uber para 32\n• Apaga o último lançamento\n• Mostre minhas metas\n\nPara mudanças importantes, peço confirmação. Sem API de IA: entendo padrões de português, não qualquer frase.';
  if(/^(relatorios|graficos|abrir relatorios|mostrar graficos|quero graficos)/.test(s)){show('reports');return 'Abri seus relatórios. Você pode escolher o mês e conferir os gráficos.'}
  if(/^(metas|minhas metas|mostre minhas metas|qual minha meta)/.test(s)){if(!state.goals.length)return 'Você ainda não tem metas cadastradas. Abra a aba Metas para criar sua primeira.';return '🎯 Metas:\n'+state.goals.map(g=>`${g.name}: ${money(g.current)} / ${money(g.target)} (${Math.min(100,Math.round(g.current/g.target*100))}%)`).join('\n')}
  if(/^(gastos fixos|despesas fixas|meus fixos|quais sao meus gastos fixos)/.test(s)){if(!state.fixed.length)return 'Nenhum gasto fixo cadastrado. Abra a aba Fixos para começar.';return '↻ Gastos fixos cadastrados:\n'+state.fixed.map(g=>`${g.description}: ${money(g.amount)} (dia ${g.day})`).join('\n')}
+ const paymentQuery=chMethodQuestion(s);if(paymentQuery)return paymentQuery;
  if(/^(parcelas|compras parceladas|minhas parcelas|cartoes|cartoes e parcelas)/.test(s)){show('cards');return 'Abri suas parcelas e compras no cartão.'}
  if(/\b(maior gasto|maiores gastos|maior despesa|maiores despesas|onde mais gastei|categorias que mais gastei)\b/.test(s)){
   const p=chPeriod(s),items=chItemsFor(p).filter(t=>t.type==='expense');
@@ -444,6 +512,8 @@ function chSmartAnswer(original){
   return 'O que deseja corrigir? Exemplo: “Corrige o Uber para 32 reais”.';
  }
  if(/\b(resumo|saldo|balanco|quanto tenho|quanto sobrou|quanto gastei|gastei quanto|gastos com|despesas com|quanto foi gasto|quanto eu gastei|quanto entrou|quanto recebi)\b/.test(s))return chSummaryAnswer(s);
+ const merchantQuestion=chMerchant(s);
+ if(merchantQuestion&&/\b(compras|gastos|quanto|detalhes|historico|mostra|mostre|onde|gastei)\b/.test(s)){const p=chPeriod(s);return chDetailList(chItemsFor(p).filter(t=>t.type==='expense'&&!chIsBill(t)&&chMerchant(t.description)?.name===merchantQuestion.name),`Gastos em ${merchantQuestion.name}`,p);}
  if(/(?:em\s*\d+\s*(?:vezes|x)|\bparcelad[oa]s?\b|\bparcela\b)/.test(s)){ 
   show('cards');return 'Para não criar parcelas erradas, use a aba Parcelas. Lá você informa valor total, cartão, quantidade e primeira data. As parcelas aparecem nos relatórios.';
  }
