@@ -26,7 +26,7 @@ button{font:inherit;cursor:pointer}button:disabled{opacity:.65;cursor:wait}
 .primary{margin-top:23px;border:0;background:linear-gradient(110deg,#ff64ad,#c41b71);color:white;border-radius:12px;width:100%;padding:15px 12px;font-weight:750;font-size:15px;box-shadow:0 12px 30px #c41b7140}
 .link{border:0;background:transparent;color:#ff9cc7;font-size:12px;font-weight:600;padding:4px;cursor:pointer}.link:hover{text-decoration:underline}
 .switch{margin-top:23px;text-align:center;font-size:13px;color:#cdb8c9}.switch .link{font-size:13px}
-.notice{display:none;margin:0 0 18px;background:#291628;border:1px solid #774258;color:#ffcada;padding:12px 13px;border-radius:11px;font-size:13px;line-height:1.5;overflow-wrap:anywhere}
+.register-switch{margin-top:20px;text-align:center;font-size:13px;color:#cdb8c9}.register-switch .link{font-size:13px;font-weight:700}.security-tip{font-size:11px;text-align:center;color:#bca4b8;line-height:1.5;margin-top:16px}.notice{display:none;margin:0 0 18px;background:#291628;border:1px solid #774258;color:#ffcada;padding:12px 13px;border-radius:11px;font-size:13px;line-height:1.5;overflow-wrap:anywhere}
 .notice.ok{background:#20152a;border-color:#664363;color:#f4d4ee}.notice:not(:empty){display:block}
 .bottom{margin:17px auto 0;text-align:center;color:#a98fa5;font-size:12px}.bottom .link{color:#c6a8ba;font-size:12px}
 [hidden]{display:none!important}
@@ -37,18 +37,21 @@ input[readonly]{background:#211624;color:#f4cbe1;cursor:default}</style></head>
 <div class="logo" aria-label="Ch Financeiro"><div class="mark">Ch</div><div class="name">Financeiro</div></div>
 <section class="card" aria-label="Acesso ao Ch">
 <h1 id="heading">Bem-vindo de volta</h1>
-<p id="subtitle" class="lead">Seu financeiro no celular e no computador.</p>
+<p id="lead" class="lead">Entre com seu usuário e senha para acessar suas finanças no celular e no computador.</p>
 <div id="notice" class="notice" role="status" aria-live="polite"></div>
 <form id="authForm">
 <label for="username">Usuário</label>
-<input id="username" name="username" type="text" value="Rodrigo" autocomplete="username" readonly aria-label="Usuário Rodrigo">
+<input id="username" name="username" type="text" autocomplete="username" autocapitalize="none" spellcheck="false" maxlength="24" pattern="[A-Za-z][A-Za-z0-9_]{2,23}" title="De 3 a 24 caracteres: letras, números e _, iniciando com uma letra." placeholder="Ex.: Rodrigo" required>
 <label for="password">Senha</label>
 <div class="password-wrap"><input id="password" name="password" type="password" autocomplete="current-password" placeholder="Digite sua senha" minlength="8" required><button id="showPassword" class="toggle" type="button" aria-label="Mostrar senha">Mostrar</button></div>
+<div id="confirmGroup" hidden><label for="confirmPassword">Confirmar senha</label><input id="confirmPassword" name="confirmPassword" type="password" autocomplete="new-password" minlength="8" placeholder="Repita sua senha"></div>
 <button id="submitButton" class="primary" type="submit">Entrar</button>
+<div class="register-switch" id="registerSwitch">Não tem uma conta? <button id="switchMode" class="link" type="button">Criar conta</button></div>
+<p class="security-tip">Cada conta tem dados separados. Guarde sua senha: não há recuperação automática por e-mail.</p>
 </form>
 
 </section>
-<div class="bottom"><button id="guest" class="link" type="button">Continuar no modo local (sem sincronização)</button><p>Seus dados não ficam públicos no GitHub.</p></div>
+<div class="bottom"><button id="guest" class="link" type="button">Continuar sem conta (somente neste dispositivo)</button><p>Seus dados não ficam públicos no GitHub.</p></div>
 </main>
 <script src="./cloud-config.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
