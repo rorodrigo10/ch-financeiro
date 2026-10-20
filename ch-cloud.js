@@ -49,6 +49,7 @@ const displayAuth = signed => {
  $c('chCloudLoginForm').classList.toggle('hidden',signed);
  $c('chCloudSignedIn').classList.toggle('hidden',!signed);
  $c('chCloudUser').textContent = signed ? (currentUser?.email||'Conta autenticada') : '';
+ $c('chAccountOpen').classList.toggle('hidden',signed);
 };
 const storePayload = () => JSON.parse(JSON.stringify({transactions:state.transactions,messages:state.messages,fixed:state.fixed,goals:state.goals,purchases:state.purchases}));
 const refreshUI = () => {
@@ -187,6 +188,8 @@ async function signOut(){
  cloudRevision=0;
  displayAuth(false);
  display('Você saiu. Seus dados locais foram limpos deste dispositivo.','ok');
+ sessionStorage.removeItem('ch_entry_mode_v1');
+ location.replace('./login.html');
 }
 async function launch(config){
  if(!window.supabase?.createClient){display('A biblioteca de sincronização não carregou. Verifique sua conexão à internet. O Ch permanece funcional no modo local.','error');return}
