@@ -142,11 +142,11 @@ function init(){
  if(typeof state==='undefined'||typeof show!=='function'||typeof draw!=='function'){console.warn('Ch v20: aplicação principal indisponível');return}
  addDashboard();prepareReports();initMobileNavigation();
  const desktop=el('desktopTabs');const first=desktop?.querySelector('[data-tab="dashboard"]');if(first){desktop.prepend(first);first.textContent='⌂  Início';}
- const originalShow=show;show=function(id){originalShow(id);if(id==='chat'){el('viewName').textContent='Converse com XX Wallet';el('viewCaption').textContent='Registre, consulte e acompanhe';}markNavigation(id);dashboardUpdate()};
+ const originalShow=show;show=function(id){originalShow(id);if(id==='chat'){el('viewName').textContent='Wali';el('viewCaption').textContent='Assistente da XX Wallet · Registre e consulte seus gastos';}markNavigation(id);dashboardUpdate()};
  const originalDraw=draw;draw=function(...args){originalDraw(...args);dashboardUpdate();decorateBotMessage()};
  const originalMsg=msg;msg=function(...args){const result=originalMsg(...args);decorateBotMessage();return result};
  ['dashMonth','reportMonth'].forEach(id=>el(id)?.addEventListener('change',dashboardUpdate));
- decorateBotMessage();dashboardUpdate();const initial=document.querySelector('.view.active')?.id||'chat';if(initial==='chat'){el('viewName').textContent='Converse com XX Wallet';el('viewCaption').textContent='Registre, consulte e acompanhe';}markNavigation(initial);
+ decorateBotMessage();dashboardUpdate();const initial=document.querySelector('.view.active')?.id||'chat';if(initial==='chat'){el('viewName').textContent='Wali';el('viewCaption').textContent='Assistente da XX Wallet · Registre e consulte seus gastos';}markNavigation(initial);
  const ob=new MutationObserver(()=>decorateBotMessage());if(el('messages'))ob.observe(el('messages'),{childList:true});
 }
 if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',init,{once:true});else init();
