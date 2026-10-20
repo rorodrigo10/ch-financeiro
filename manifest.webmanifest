@@ -1,12 +1,12 @@
 {
-  "name": "Ch — Assistente Financeiro",
-  "short_name": "Ch",
-  "description": "Chat e sincronização de finanças pessoais.",
+  "name": "XX Wallet — Seu dinheiro, com mais clareza",
+  "short_name": "XX Wallet",
+  "description": "Organize seus gastos, cartões, metas e relatórios com clareza.",
   "start_url": "./",
   "scope": "./",
   "display": "standalone",
-  "background_color": "#ded8dd",
-  "theme_color": "#ded8dd",
+  "background_color": "#F6EEE9",
+  "theme_color": "#4B0D32",
   "icons": [
     {
       "src": "./icon.svg",
