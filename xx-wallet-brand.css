@@ -19,3 +19,23 @@
  .logo{gap:12px!important}
 }
 @media(max-width:350px){.logo .name{font-size:23px!important}.logo{gap:9px!important}}
+
+/* Wali — assinatura do assistente nas mensagens; apenas visual. */
+#chat .bubble.bot::before{
+  content:"✦  Wali";
+  display:block;
+  width:max-content;
+  max-width:100%;
+  margin:0 0 7px;
+  color:#A12862;
+  font-size:11px;
+  line-height:1.3;
+  font-weight:800;
+  letter-spacing:.018em;
+  white-space:normal;
+}
+#chat .bubble.bot.v20-structured-bubble::before{margin-bottom:10px}
+#chat .bubble.bot time{color:#827580}
+@media(max-width:760px){
+  #chat .bubble.bot::before{font-size:10px;margin-bottom:6px}
+}
