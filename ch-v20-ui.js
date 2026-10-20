@@ -12,7 +12,7 @@ function addDashboard(){
  root.classList.add('v20-dashboard');
  const head=root.querySelector('.pagehead');
  const hero=mk('section','v20-hero');hero.id='v20Hero';
- hero.innerHTML=`<div class="v20-hero-copy"><div class="v20-kicker"><span class="v20-kicker-dot"></span>VISÃO GERAL</div><p class="v20-hero-label">Saldo registrado em conta</p><h1 id="v20Balance">R$ 0,00</h1><p class="v20-hero-note">Estimativa com base nos seus lançamentos, não no saldo do banco.</p><div class="v20-hero-actions"><button type="button" id="v20NewEntry">+ Registrar movimentação</button><button type="button" id="v20OpenChat">Conversar com o Ch ↗</button></div></div><div class="v20-hero-figure" aria-hidden="true"><div class="v20-figure-ring"><span>Ch</span></div><div class="v20-figure-line"></div><div class="v20-figure-petal"></div></div>`;
+ hero.innerHTML=`<div class="v20-hero-copy"><div class="v20-kicker"><span class="v20-kicker-dot"></span>VISÃO GERAL</div><p class="v20-hero-label">Saldo registrado em conta</p><h1 id="v20Balance">R$ 0,00</h1><p class="v20-hero-note">Estimativa com base nos seus lançamentos, não no saldo do banco.</p><div class="v20-hero-actions"><button type="button" id="v20NewEntry">+ Registrar movimentação</button><button type="button" id="v20OpenChat">Conversar com o Ch ↗</button></div></div><div class="v20-hero-figure" aria-hidden="true"><div class="v20-figure-ring"><img class="xx-wallet-hero-mark" src="./xx-wallet-mark.svg" alt=""></div><div class="v20-figure-line"></div><div class="v20-figure-petal"></div></div>`;
  const stats=mk('div','v20-stats');stats.id='v20Stats';
  const config=[['↗','Entradas','v20Income','Valores registrados'],['↘','Saídas da conta','v20Out','Inclui faturas pagas'],['💳','Crédito','v20Credit','Compras e parcelas previstas'],['◷','Cobranças fixas','v20Fixed','Previstas neste mês']];
  for(const [icon,label,id,hint] of config){const card=mk('article','v20-stat');card.innerHTML=`<span class="v20-stat-icon" aria-hidden="true">${icon}</span><span class="v20-stat-label">${label}</span><strong id="${id}">R$ 0,00</strong><span class="v20-stat-hint">${hint}</span>`;stats.append(card)}
@@ -142,11 +142,11 @@ function init(){
  if(typeof state==='undefined'||typeof show!=='function'||typeof draw!=='function'){console.warn('Ch v20: aplicação principal indisponível');return}
  addDashboard();prepareReports();initMobileNavigation();
  const desktop=el('desktopTabs');const first=desktop?.querySelector('[data-tab="dashboard"]');if(first){desktop.prepend(first);first.textContent='⌂  Início';}
- const originalShow=show;show=function(id){originalShow(id);if(id==='chat'){el('viewName').textContent='Converse com Ch';el('viewCaption').textContent='Registre, consulte e acompanhe';}markNavigation(id);dashboardUpdate()};
+ const originalShow=show;show=function(id){originalShow(id);if(id==='chat'){el('viewName').textContent='Converse com XX Wallet';el('viewCaption').textContent='Registre, consulte e acompanhe';}markNavigation(id);dashboardUpdate()};
  const originalDraw=draw;draw=function(...args){originalDraw(...args);dashboardUpdate();decorateBotMessage()};
  const originalMsg=msg;msg=function(...args){const result=originalMsg(...args);decorateBotMessage();return result};
  ['dashMonth','reportMonth'].forEach(id=>el(id)?.addEventListener('change',dashboardUpdate));
- decorateBotMessage();dashboardUpdate();const initial=document.querySelector('.view.active')?.id||'chat';if(initial==='chat'){el('viewName').textContent='Converse com Ch';el('viewCaption').textContent='Registre, consulte e acompanhe';}markNavigation(initial);
+ decorateBotMessage();dashboardUpdate();const initial=document.querySelector('.view.active')?.id||'chat';if(initial==='chat'){el('viewName').textContent='Converse com XX Wallet';el('viewCaption').textContent='Registre, consulte e acompanhe';}markNavigation(initial);
  const ob=new MutationObserver(()=>decorateBotMessage());if(el('messages'))ob.observe(el('messages'),{childList:true});
 }
 if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',init,{once:true});else init();
