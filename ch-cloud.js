@@ -48,7 +48,8 @@ const displayAuth = signed => {
  $c('chCloudAuth').classList.remove('hidden');
  $c('chCloudLoginForm').classList.toggle('hidden',signed);
  $c('chCloudSignedIn').classList.toggle('hidden',!signed);
- $c('chCloudUser').textContent = signed ? (currentUser?.email==='rodrigo@ch-financeiro.example.com'?'Rodrigo':(currentUser?.email||'Conta autenticada')) : '';
+ const email=currentUser?.email||'';
+ $c('chCloudUser').textContent = signed ? (email.toLowerCase().endsWith('@ch-financeiro.example.com') ? email.split('@')[0] : email||'Conta autenticada') : '';
  $c('chAccountOpen').classList.toggle('hidden',signed);
 };
 const storePayload = () => JSON.parse(JSON.stringify({transactions:state.transactions,messages:state.messages,fixed:state.fixed,goals:state.goals,purchases:state.purchases}));
@@ -119,6 +120,14 @@ async function initForUser(user){
   const local=storePayload();
   const localHas=HAS_DATA(local);
   const previousOwner=localStorage.getItem(OWNER_STORAGE);
+  if(previousOwner && previousOwner!==user.id && localHas){
+   // Falha fechada: não importar nem sincronizar registros de outro usuário.
+   display('Este navegador contém registros locais de outra conta. Entre na conta original e faça backup antes de trocar de usuário.', 'error');
+   await api.auth.signOut();
+   sessionStorage.removeItem('ch_entry_mode_v1');
+   location.replace('./login.html?conta=diferente');
+   return;
+  }
   const unsynced=localStorage.getItem(DIRTY_STORAGE)==='1' && previousOwner===user.id;
   if(cloud){
    cloudRevision=Number(cloud.revision);
