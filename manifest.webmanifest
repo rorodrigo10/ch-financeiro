@@ -1,0 +1,18 @@
+{
+  "name": "Ch — Assistente Financeiro",
+  "short_name": "Ch",
+  "description": "Finanças pessoais em formato de chat.",
+  "start_url": "./",
+  "scope": "./",
+  "display": "standalone",
+  "background_color": "#100c13",
+  "theme_color": "#c51d73",
+  "icons": [
+    {
+      "src": "./icon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    }
+  ]
+}
