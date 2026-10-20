@@ -1,7 +1,7 @@
 {
   "name": "Ch — Assistente Financeiro",
   "short_name": "Ch",
-  "description": "Finanças pessoais em formato de chat.",
+  "description": "Chat e sincronização de finanças pessoais.",
   "start_url": "./",
   "scope": "./",
   "display": "standalone",
