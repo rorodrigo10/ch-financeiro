@@ -12,7 +12,7 @@ function addDashboard(){
  root.classList.add('v20-dashboard');
  const head=root.querySelector('.pagehead');
  const hero=mk('section','v20-hero');hero.id='v20Hero';
- hero.innerHTML=`<div class="v20-hero-copy"><div class="v20-kicker"><span class="v20-kicker-dot"></span>VISÃO GERAL</div><p class="v20-hero-label">Saldo registrado em conta</p><h1 id="v20Balance">R$ 0,00</h1><p class="v20-hero-note">Estimativa com base nos seus lançamentos, não no saldo do banco.</p><div class="v20-hero-actions"><button type="button" id="v20NewEntry">+ Registrar movimentação</button><button type="button" id="v20OpenChat">Conversar com o Ch ↗</button></div></div><div class="v20-hero-figure" aria-hidden="true"><div class="v20-figure-ring"><img class="xx-wallet-hero-mark" src="./xx-wallet-mark.svg" alt=""></div><div class="v20-figure-line"></div><div class="v20-figure-petal"></div></div>`;
+ hero.innerHTML=`<div class="v20-hero-copy"><div class="v20-kicker"><span class="v20-kicker-dot"></span>VISÃO GERAL</div><p class="v20-hero-label">Saldo registrado em conta</p><h1 id="v20Balance">R$ 0,00</h1><p class="v20-hero-note">Estimativa com base nos seus lançamentos, não no saldo do banco.</p><div class="v20-hero-actions"><button type="button" id="v20NewEntry">+ Registrar movimentação</button><button type="button" id="v20OpenChat">Conversar com Wali ↗</button></div></div><div class="v20-hero-figure" aria-hidden="true"><div class="v20-figure-ring"><img class="xx-wallet-hero-mark" src="./xx-wallet-mark.svg" alt=""></div><div class="v20-figure-line"></div><div class="v20-figure-petal"></div></div>`;
  const stats=mk('div','v20-stats');stats.id='v20Stats';
  const config=[['↗','Entradas','v20Income','Valores registrados'],['↘','Saídas da conta','v20Out','Inclui faturas pagas'],['💳','Crédito','v20Credit','Compras e parcelas previstas'],['◷','Cobranças fixas','v20Fixed','Previstas neste mês']];
  for(const [icon,label,id,hint] of config){const card=mk('article','v20-stat');card.innerHTML=`<span class="v20-stat-icon" aria-hidden="true">${icon}</span><span class="v20-stat-label">${label}</span><strong id="${id}">R$ 0,00</strong><span class="v20-stat-hint">${hint}</span>`;stats.append(card)}
@@ -102,7 +102,7 @@ function initMobileNavigation(){
  }
  moreButton=mk('button','v20-main-tab v20-more-tab');moreButton.type='button';moreButton.id='v20MoreButton';moreButton.setAttribute('aria-label','Mais opções');moreButton.setAttribute('aria-expanded','false');moreButton.append(mk('b','v20-tab-icon','☰'),mk('span','','Mais'));nav.append(moreButton);
  moreBackdrop=mk('div','v20-more-backdrop');moreBackdrop.id='v20MoreBackdrop';moreBackdrop.hidden=true;
- moreSheet=mk('aside','v20-more-sheet');moreSheet.id='v20MoreSheet';moreSheet.setAttribute('role','dialog');moreSheet.setAttribute('aria-label','Outras áreas do Ch');moreSheet.setAttribute('aria-modal','true');moreSheet.hidden=true;
+ moreSheet=mk('aside','v20-more-sheet');moreSheet.id='v20MoreSheet';moreSheet.setAttribute('role','dialog');moreSheet.setAttribute('aria-label','Outras áreas da XX Wallet');moreSheet.setAttribute('aria-modal','true');moreSheet.hidden=true;
  const title=mk('div','v20-more-head');title.append(mk('h3','','Mais opções'));
  const close=mk('button','v20-close','✕');close.type='button';close.setAttribute('aria-label','Fechar menu');title.append(close);moreSheet.append(title);
  for(const [id,symbol] of [['fixed','↻'],['goals','◎'],['cards','▣'],['settings','⚙']]){
