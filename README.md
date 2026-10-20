@@ -1,22 +1,26 @@
-# Ch Financeiro — acesso pessoal Rodrigo (v10)
+# Ch Financeiro — v11 multiusuário
 
-O login mostra apenas **Rodrigo + senha**. Não pede e-mail nem oferece recuperação automática. A senha é validada pelo Supabase Auth, nunca pelo código público do GitHub.
+Aplicativo financeiro pessoal em estilo de chat, agora com **login e cadastro por usuário e senha**. Cada pessoa usa a própria conta Supabase com registros isolados pela política RLS da tabela `public.ch_user_state`.
 
-## Configuração única no Supabase
+## Ativar o cadastro (obrigatório)
 
-1. Abra https://supabase.com/dashboard/project/tkawfrhydnvsrzpjzsco/auth/users
-2. **Authentication → Users → Add user → Create new user**.
-3. No campo **Email**, preencha o identificador técnico `rodrigo@ch-financeiro.example.com` (não é uma caixa de e-mail real).
-4. Defina **você mesmo uma senha forte**, sem enviá-la para o ChatGPT.
-5. Ative **Auto Confirm User** se o formulário tiver essa opção, depois salve.
-6. Acesse https://rorodrigo10.github.io/ch-financeiro/login.html e entre como Rodrigo com sua senha.
+Acesse [Authentication → Providers](https://supabase.com/dashboard/project/tkawfrhydnvsrzpjzsco/auth/providers), abra **Email** e ajuste:
 
-O Supabase usa e-mail ou telefone para autenticação por senha; usamos um identificador técnico reservado como login interno. Se o serviço rejeitar esse formato, não use um e-mail que pertença a outra pessoa — peça auxílio para mudar a configuração.
+1. **Email** habilitado.
+2. **Confirm email** desativado, para criar usuários sem e-mail real.
+3. **Allow new users to sign up** ativado nas configurações gerais de Authentication.
 
-## Cuidados
+O Supabase precisa de identificadores de login no formato e-mail. O Ch transforma o nome `maria` em `maria@ch-financeiro.example.com` **apenas internamente**, sem uma caixa postal verdadeira. O nome `Rodrigo` mantém o identificador já usado na v10. A senha é validada pelo Supabase e não aparece no código do GitHub.
 
-- Faça backup JSON antes de trocar contas. Lançamentos de uma conta anterior não são migrados automaticamente.
-- Após criar Rodrigo, é recomendável desligar **Allow new users to sign up** nas configurações gerais de Authentication, preservando o provedor e-mail/senha.
-- **Sem recuperação automática:** administre a senha no painel do Supabase. Excluir o usuário pode excluir seus dados na tabela `ch_user_state` devido ao relacionamento ON DELETE CASCADE. Prefira redefinir a senha; sempre faça backup.
-- O acesso local sem conta não sincroniza dados.
-- Não publique senhas ou chaves secretas no GitHub. O banco usa RLS.
+## Como acessar
+
+Abra https://rorodrigo10.github.io/ch-financeiro/login.html e clique em **Criar conta** ou **Entrar**, utilizando apenas usuário e senha. Escolha uma senha forte. No segundo dispositivo, use a **mesma conta** para sincronizar.
+
+A sincronização atual é por cópia completa com revisão e aviso de conflito; não combina automaticamente duas edições simultâneas. Faça backup JSON antes de importar dados antigos.
+
+## Limitações e segurança
+
+- **Sem e-mail de recuperação:** quem esquecer a senha precisará de assistência administrativa segura e poderá perder o acesso aos dados. Não exclua a conta para redefinir a senha; a linha de dados está vinculada ao usuário e será apagada com ele por `ON DELETE CASCADE`.
+- O cadastro aberto sem confirmação por e-mail é adequado somente para o **protótipo**. Para oferecer o Ch ao público, é recomendável autenticação com e-mail verificável ou mecanismo equivalente de recuperação, CAPTCHA, limites contra abuso e revisão de segurança.
+- Nunca publique senhas, service_role ou chaves `sb_secret_...` no repositório.
+- Ao sair, o Ch pergunta antes de remover registros locais. Perfis diferentes nunca devem ser mesclados automaticamente.
