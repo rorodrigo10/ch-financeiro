@@ -1,23 +1,22 @@
-# Ch Financeiro v8
+# Ch Financeiro — acesso pessoal Rodrigo (v10)
 
-Aplicativo de finanças pessoais para GitHub Pages. Interface preta/rosa, chat, registros, metas, gastos fixos, parcelas, relatórios e sincronização opcional.
+O login mostra apenas **Rodrigo + senha**. Não pede e-mail nem oferece recuperação automática. A senha é validada pelo Supabase Auth, nunca pelo código público do GitHub.
 
-## Ativar a nuvem grátis
+## Configuração única no Supabase
 
-1. Faça um **backup JSON** de seus dados atuais no Ch.
-2. Abra o Supabase Dashboard do projeto `ch-financeiro`.
-3. No **SQL Editor**, execute o arquivo [supabase-setup.sql](./supabase-setup.sql) completo para criar a tabela e as regras de segurança (RLS).
-4. Em **Authentication > URL Configuration**, defina a **Site URL** como `https://rorodrigo10.github.io/ch-financeiro/`. Se necessário, permita o mesmo endereço em Redirect URLs.
-5. Abra o [Ch publicado](https://rorodrigo10.github.io/ch-financeiro/) e vá em **Dados**: a Project URL e a chave publicável já estão configuradas.
-6. Crie uma conta com e-mail e senha, confirme o e-mail se necessário e faça login. Se houver lançamentos locais, confirme o envio à nuvem somente depois de salvar seu backup.
-7. No celular e no PC, abra o mesmo endereço e use **a mesma conta**. Atualização automática enquanto o app estiver aberto (~20 segundos).
+1. Abra https://supabase.com/dashboard/project/tkawfrhydnvsrzpjzsco/auth/users
+2. **Authentication → Users → Add user → Create new user**.
+3. No campo **Email**, preencha o identificador técnico `rodrigo@ch-financeiro.example.com` (não é uma caixa de e-mail real).
+4. Defina **você mesmo uma senha forte**, sem enviá-la para o ChatGPT.
+5. Ative **Auto Confirm User** se o formulário tiver essa opção, depois salve.
+6. Acesse https://rorodrigo10.github.io/ch-financeiro/login.html e entre como Rodrigo com sua senha.
 
-### Privacidade e limitações
-- A chave `sb_publishable_...` é pública, projetada para uso no browser; **não publique service_role, sb_secret, senhas ou arquivos de backup**.
-- Acesso por usuário usa autenticação e RLS; sem executar o SQL a sincronização não funciona.
-- O app salva uma cópia local no navegador; backup JSON continua recomendado.
-- Conflitos entre alterações simultâneas são detectados e exigem intervenção, sem mesclagem automática.
-- O GitHub Pages publica o código, mas **não contém seus dados financeiros**.
-- O Supabase Free está sujeito a limites e suspensão por inatividade.
+O Supabase usa e-mail ou telefone para autenticação por senha; usamos um identificador técnico reservado como login interno. Se o serviço rejeitar esse formato, não use um e-mail que pertença a outra pessoa — peça auxílio para mudar a configuração.
 
-[Repositório](https://github.com/rorodrigo10/ch-financeiro) · [Site](https://rorodrigo10.github.io/ch-financeiro/)
+## Cuidados
+
+- Faça backup JSON antes de trocar contas. Lançamentos de uma conta anterior não são migrados automaticamente.
+- Após criar Rodrigo, é recomendável desligar **Allow new users to sign up** nas configurações gerais de Authentication, preservando o provedor e-mail/senha.
+- **Sem recuperação automática:** administre a senha no painel do Supabase. Excluir o usuário pode excluir seus dados na tabela `ch_user_state` devido ao relacionamento ON DELETE CASCADE. Prefira redefinir a senha; sempre faça backup.
+- O acesso local sem conta não sincroniza dados.
+- Não publique senhas ou chaves secretas no GitHub. O banco usa RLS.
