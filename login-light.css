@@ -1,0 +1,83 @@
+/* Ch v17 — login editorial branco. Só aparência. */
+:root { color-scheme:light; font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Arial,sans-serif; color:#28232b; background:#fff; }
+html,body { background:#fff; color:#28232b; }
+body {
+  min-height:100dvh;
+  background:#fff;
+  position:relative;
+  display:grid;
+  place-items:center;
+  padding:44px 18px;
+  -webkit-font-smoothing:antialiased;
+}
+body::before {
+  content:"";
+  height:5px;
+  background:#b72e68;
+  position:fixed;
+  top:0;left:0;right:0;
+}
+main { width:100%; max-width:442px; }
+.logo { margin-bottom:26px; gap:13px; }
+.mark {
+  background:#f8e7ef; color:#a22b5c;
+  border:1px solid #efcddd;
+  box-shadow:none;
+  border-radius:13px;
+  width:51px;height:51px;
+  font-size:22px;
+}
+.name { color:#24202a; letter-spacing:-1.3px; font-size:27px; }
+.card {
+  background:#fff;
+  color:#28232b;
+  border:1px solid #e6e0e5;
+  box-shadow:0 8px 40px #2110200b;
+  border-radius:14px;
+  padding:37px 33px 32px;
+}
+h1 { font-weight:760; color:#29242d; font-size:27px; letter-spacing:-.8px; }
+p.lead { color:#746c76; line-height:1.7; font-size:13px; }
+label { color:#443b45; font-weight:680; font-size:12px; }
+input {
+  background:#fff; color:#27222a; border:1px solid #ded7dd;
+  border-radius:9px; padding:14px; font-size:16px;
+  color-scheme:light;
+}
+input:focus { border-color:#b72e68; box-shadow:0 0 0 3px #f5dbe7; }
+input::placeholder { color:#afa4ae; }
+input[readonly] { background:#faf7f9; color:#9f2c5e; }
+.password-wrap input { background:#fff; }
+.toggle {
+  background:#f8f4f6;
+  color:#6b5260;
+  border:1px solid #eee5ea;
+  border-radius:7px;
+}
+.primary {
+  background:#b72e68;
+  border:1px solid #b72e68;
+  border-radius:9px;
+  box-shadow:none;
+  font-weight:750;
+}
+.primary:hover { background:#982151; }
+.link { color:#ab2d60; }
+.register-switch,.switch { color:#746b74; }
+.security-tip { color:#857b84; }
+.notice {
+  background:#fff5f8;
+  color:#874463;
+  border:1px solid #f0d5e2;
+  border-left:3px solid #b72e68;
+  border-radius:8px;
+}
+.notice.ok { background:#f3faf7; border-color:#d8eae1; border-left:3px solid #318262; color:#24674c; }
+.bottom,.bottom .link { color:#827783; }
+.bottom { margin-top:24px; line-height:1.5; }
+@media(max-width:460px) {
+  body { padding:25px 15px; }
+  .logo { margin-bottom:21px; }
+  .card { padding:27px 21px; border-radius:12px; box-shadow:none; }
+  h1 { font-size:25px; }
+}
