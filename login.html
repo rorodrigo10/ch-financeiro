@@ -31,23 +31,24 @@ button{font:inherit;cursor:pointer}button:disabled{opacity:.65;cursor:wait}
 .bottom{margin:17px auto 0;text-align:center;color:#a98fa5;font-size:12px}.bottom .link{color:#c6a8ba;font-size:12px}
 [hidden]{display:none!important}
 @media(max-width:460px){body{padding:23px 14px}.card{padding:28px 20px;border-radius:21px}.logo{margin-bottom:25px}}
-</style></head>
+input[readonly]{background:#211624;color:#f4cbe1;cursor:default}</style></head>
 <body>
 <main>
 <div class="logo" aria-label="Ch Financeiro"><div class="mark">Ch</div><div class="name">Financeiro</div></div>
 <section class="card" aria-label="Acesso ao Ch">
-<h1 id="heading">Bem-vindo ao Ch</h1>
-<p id="subtitle" class="lead">Entre para acompanhar suas finanças no celular e no computador.</p>
+<h1 id="heading">Bem-vindo de volta</h1>
+<p id="subtitle" class="lead">Seu financeiro no celular e no computador.</p>
 <div id="notice" class="notice" role="status" aria-live="polite"></div>
 <form id="authForm">
-<div id="emailGroup"><label for="email">E-mail</label><input id="email" type="email" autocomplete="email" placeholder="seu@email.com" required></div>
-<div id="passwordGroup"><div class="password-line"><label for="password">Senha</label><button id="forgotLink" class="link" type="button">Esqueceu sua senha?</button></div><div class="password-wrap"><input id="password" type="password" autocomplete="current-password" placeholder="Digite sua senha" minlength="8" required><button id="showPassword" class="toggle" type="button" aria-label="Mostrar senha">Mostrar</button></div></div>
-<div id="confirmGroup" hidden><label for="passwordConfirm">Confirmar senha</label><input id="passwordConfirm" type="password" autocomplete="new-password" minlength="8" placeholder="Repita sua senha"></div>
+<label for="username">Usuário</label>
+<input id="username" name="username" type="text" value="Rodrigo" autocomplete="username" readonly aria-label="Usuário Rodrigo">
+<label for="password">Senha</label>
+<div class="password-wrap"><input id="password" name="password" type="password" autocomplete="current-password" placeholder="Digite sua senha" minlength="8" required><button id="showPassword" class="toggle" type="button" aria-label="Mostrar senha">Mostrar</button></div>
 <button id="submitButton" class="primary" type="submit">Entrar</button>
 </form>
-<div id="switcher" class="switch">Não tem conta? <button class="link" type="button" id="switchMode">Criar conta</button></div>
+
 </section>
-<div class="bottom"><button id="guest" class="link" type="button">Continuar sem conta (somente neste dispositivo)</button><p>Seus dados não ficam públicos no GitHub.</p></div>
+<div class="bottom"><button id="guest" class="link" type="button">Continuar no modo local (sem sincronização)</button><p>Seus dados não ficam públicos no GitHub.</p></div>
 </main>
 <script src="./cloud-config.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
