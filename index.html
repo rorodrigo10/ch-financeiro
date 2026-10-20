@@ -385,7 +385,7 @@ function chSmartAnswer(original){
  const s=norm(original.trim());
  if(chPending?.kind==='payment'){
   if(chIsNo(s)){chPending=null;return 'Lançamento cancelado.'}
-  const method=/(pix)/.test(s)?'pix':/(debito|dinheiro|conta)/.test(s)?'debit':/(credito|cartao|credit)/.test(s)?'credit':/(fatura|pagamento da fatura)/.test(s)?'bill':null;
+  const method=/\b(pix)\b/.test(s)?'pix':/\b(debito|dinheiro|conta)\b/.test(s)?'debit':/\b(credito|cartao|credit)\b/.test(s)?'credit':/\b(fatura|pagamento da fatura)\b/.test(s)?'bill':null;
   if(!method)return 'Como você pagou? Responda: Pix, débito ou crédito. Para quitar cartão, diga “fatura”. Ou cancele.';
   const entries=chPending.entries;
   if(method==='credit'){
@@ -397,13 +397,13 @@ function chSmartAnswer(original){
  }
  if(chPending?.kind==='credit-details'){
   if(chIsNo(s)){chPending=null;return 'Lançamento cancelado.'}
-  const match=s.match(/(\d{1,2})\s*\/\s*(\d{1,2})/);
-  const instant=/(a vista|avista|1x|uma vez|1\/1)/.test(s);
+  const match=s.match(/\b(\d{1,2})\s*\/\s*(\d{1,2})\b/);
+  const instant=/\b(a vista|avista|1x|uma vez|1\/1)\b/.test(s);
   if(!match&&!instant)return 'Informe “à vista” ou a parcela atual/total, como 1/10 ou 4/10. Pode incluir o cartão.';
   const start=match?Number(match[1]):1,parts=match?Number(match[2]):1;
   if(start<1||parts<1||parts>48||start>parts)return 'Parcela inválida. Use, por exemplo, 4/10.';
   const entries=chPending.entries;
-  const card=original.replace(/\d{1,2}\s*\/\s*\d{1,2}/,'').replace(/(a vista|avista|1x|uma vez|no|cartao|credito|de)/gi,'').trim().slice(0,60)||'Cartão';
+  const card=original.replace(/\b\d{1,2}\s*\/\s*\d{1,2}\b/,'').replace(/\b(a vista|avista|1x|uma vez|no|cartao|credito|de)\b/gi,'').trim().slice(0,60)||'Cartão';
   chPending=null;
   if(parts>1){
    if(entries.length!==1)return 'Para parcelar com segurança, registre cada compra individualmente.';
