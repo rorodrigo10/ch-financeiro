@@ -1,0 +1,55 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#0b080e"><meta name="description" content="Ch — Seu financeiro, em conversa.">
+<title>Ch — Entrar</title>
+<link rel="icon" href="./icon.svg" type="image/svg+xml"><link rel="manifest" href="./manifest.webmanifest">
+<style>
+:root{font-family:Inter,-apple-system,BlinkMacSystemFont,'Segoe UI',system-ui,sans-serif;color:#faf0f6;background:#0b080e}
+*{box-sizing:border-box}
+body{min-height:100dvh;margin:0;background:radial-gradient(ellipse at 55% -20%,#401b32 0%,#160d19 35%,#0b080e 75%);display:grid;place-items:center;padding:34px 18px}
+main{width:100%;max-width:428px}
+.logo{display:flex;align-items:center;justify-content:center;gap:10px;margin-bottom:30px}
+.mark{width:54px;height:54px;border-radius:16px;display:grid;place-items:center;color:white;background:linear-gradient(135deg,#ff73b6,#b31c67);font-size:23px;font-weight:850;box-shadow:0 9px 35px #d1247855;letter-spacing:-1px}
+.name{font-size:33px;font-weight:800;letter-spacing:-1.7px}
+.card{background:#17101b;border:1px solid #39243a;border-radius:24px;padding:33px 30px 29px;box-shadow:0 24px 70px #0006}
+h1{margin:0 0 6px;font-size:26px;letter-spacing:-.9px}
+p.lead{margin:0 0 25px;font-size:13px;line-height:1.55;color:#c8adbf}
+label{display:block;font-size:13px;font-weight:620;color:#ecdbeb;margin:18px 0 8px}
+input{background:#0f0b12;color:#fff7fb;width:100%;font:inherit;font-size:15px;padding:14px 15px;border:1px solid #51354e;border-radius:12px;outline:none;min-height:49px}
+input:focus{border-color:#ee70ad;box-shadow:0 0 0 3px #e8439627}
+.password-line{display:flex;align-items:center;justify-content:space-between;gap:6px}
+.password-wrap{position:relative}.password-wrap input{padding-right:85px}
+.toggle{position:absolute;right:8px;top:7px;border:0;background:#291b29;color:#f1b9d6;border-radius:8px;padding:9px;font-size:12px;cursor:pointer}
+button{font:inherit;cursor:pointer}button:disabled{opacity:.65;cursor:wait}
+.primary{margin-top:23px;border:0;background:linear-gradient(110deg,#ff64ad,#c41b71);color:white;border-radius:12px;width:100%;padding:15px 12px;font-weight:750;font-size:15px;box-shadow:0 12px 30px #c41b7140}
+.link{border:0;background:transparent;color:#ff9cc7;font-size:12px;font-weight:600;padding:4px;cursor:pointer}.link:hover{text-decoration:underline}
+.switch{margin-top:23px;text-align:center;font-size:13px;color:#cdb8c9}.switch .link{font-size:13px}
+.notice{display:none;margin:0 0 18px;background:#291628;border:1px solid #774258;color:#ffcada;padding:12px 13px;border-radius:11px;font-size:13px;line-height:1.5;overflow-wrap:anywhere}
+.notice.ok{background:#20152a;border-color:#664363;color:#f4d4ee}.notice:not(:empty){display:block}
+.bottom{margin:17px auto 0;text-align:center;color:#a98fa5;font-size:12px}.bottom .link{color:#c6a8ba;font-size:12px}
+[hidden]{display:none!important}
+@media(max-width:460px){body{padding:23px 14px}.card{padding:28px 20px;border-radius:21px}.logo{margin-bottom:25px}}
+</style></head>
+<body>
+<main>
+<div class="logo" aria-label="Ch Financeiro"><div class="mark">Ch</div><div class="name">Financeiro</div></div>
+<section class="card" aria-label="Acesso ao Ch">
+<h1 id="heading">Bem-vindo ao Ch</h1>
+<p id="subtitle" class="lead">Entre para acompanhar suas finanças no celular e no computador.</p>
+<div id="notice" class="notice" role="status" aria-live="polite"></div>
+<form id="authForm">
+<div id="emailGroup"><label for="email">E-mail</label><input id="email" type="email" autocomplete="email" placeholder="seu@email.com" required></div>
+<div id="passwordGroup"><div class="password-line"><label for="password">Senha</label><button id="forgotLink" class="link" type="button">Esqueceu sua senha?</button></div><div class="password-wrap"><input id="password" type="password" autocomplete="current-password" placeholder="Digite sua senha" minlength="8" required><button id="showPassword" class="toggle" type="button" aria-label="Mostrar senha">Mostrar</button></div></div>
+<div id="confirmGroup" hidden><label for="passwordConfirm">Confirmar senha</label><input id="passwordConfirm" type="password" autocomplete="new-password" minlength="8" placeholder="Repita sua senha"></div>
+<button id="submitButton" class="primary" type="submit">Entrar</button>
+</form>
+<div id="switcher" class="switch">Não tem conta? <button class="link" type="button" id="switchMode">Criar conta</button></div>
+</section>
+<div class="bottom"><button id="guest" class="link" type="button">Continuar sem conta (somente neste dispositivo)</button><p>Seus dados não ficam públicos no GitHub.</p></div>
+</main>
+<script src="./cloud-config.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
+<script src="./login.js"></script>
+</body></html>
