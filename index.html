@@ -475,8 +475,7 @@ function chSmartAnswer(original){
    if(entries.length!==1)return 'Para parcelar com segurança, registre cada compra individualmente.';
    const e=entries[0],id=uid(),total=e.amount;
    const installments=chInstallments(total,parts,start,e.date,e.description,card,id);
-   const explicitDate=/\b(hoje|ontem|anteontem|20\d{2}[-/]\d{1,2}[-/]\d{1,2}|dia \d{1,2}\/\d{1,2}\/20\d{2})\b/.test(norm(state.messages.slice(-4).filter(m=>m.role==='me').map(m=>m.text).join(' ')));
-   state.purchases.push({id,name:e.description,card,total,parts,startPart:start,first:e.date,...(explicitDate?{purchasedOn:e.date}:{})});
+   state.purchases.push({id,name:e.description,card,total,parts,startPart:start,first:e.date,...(e.purchaseDateExplicit?{purchasedOn:e.date}:{})});
    chSaveEntries(installments);
    return `💳 Compra parcelada: ${e.description} — ${money(total)} (${start}/${parts}, ${card}).\nAs ${installments.length} parcelas previstas vão para o crédito, sem reduzir o saldo em conta. Confira datas e valores em Cartões e parcelas.`;
   }
@@ -533,7 +532,7 @@ function chSmartAnswer(original){
    return 'Identifiquei estes lançamentos:\n\n'+entries.map(chPretty).join('\n')+`\n\nTotal: ${money(chCash(entries.reduce((a,t)=>a+t.amount,0)))}\n\nConfirmar os ${entries.length} registros? (sim/não)`;
   }
   const a=chParseAmount(original);const desc=chDescription(original,a);const type=kind;
-  let e={type:type||'expense',amount:a?.number||0,description:desc,category:type==='income'?'Receitas':chCat(original),date:chDateIn(original)};
+  let e={type:type||'expense',amount:a?.number||0,description:desc,category:type==='income'?'Receitas':chCat(original),date:chDateIn(original),purchaseDateExplicit:/\b(hoje|ontem|anteontem|20\d{2}[-/]\d{1,2}[-/]\d{1,2}|dia \d{1,2}\/\d{1,2}\/20\d{2})\b/.test(s)};
   if(!a){chPending={kind:'detail',which:'amount',entry:e};return 'Entendi! Quanto custou? Pode responder só com o valor, como “35,50”.';}
   if(!desc){chPending={kind:'detail',which:'description',entry:e};return `Foi ${money(a.number)}. Em que foi esse ${type==='income'?'recebimento':'gasto'}?`}
   if(!type){chPending={kind:'detail',which:'type',entry:e};return `Entendi ${money(a.number)} em “${desc}”. Foi uma despesa ou uma receita?`}
