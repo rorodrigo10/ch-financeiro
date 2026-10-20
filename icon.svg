@@ -1,1 +1,12 @@
-<svg xmlns="http://www.w3.org/2000/svg" width="512" height="512" viewBox="0 0 512 512"><rect width="512" height="512" rx="105" fill="#ffffff"/><rect x="58" y="58" width="396" height="396" rx="104" fill="#f8e7ef"/><text x="256" y="306" text-anchor="middle" fill="#a3285d" font-family="Arial,sans-serif" font-size="164" font-weight="700">Ch</text></svg>
+<svg xmlns="http://www.w3.org/2000/svg" width="512" height="512" viewBox="0 0 256 256" role="img" aria-label="XX Wallet"><defs><linearGradient id="tile" x1="0" x2="1" y1="1" y2="0"><stop stop-color="#230616"/><stop offset=".60" stop-color="#4B0D32"/><stop offset="1" stop-color="#86214D"/></linearGradient></defs><rect width="256" height="256" rx="57" fill="url(#tile)"/><rect x="2.5" y="2.5" width="251" height="251" rx="54.5" fill="none" stroke="#AC4C79" stroke-opacity=".67" stroke-width="3"/><defs>
+  <linearGradient id="back" x1="0" x2="1" y1="1" y2="0"><stop stop-color="#7B1745"/><stop offset=".58" stop-color="#C04378"/><stop offset="1" stop-color="#F3B6CF"/></linearGradient>
+  <linearGradient id="front" x1="0" x2="1" y1="0" y2="1"><stop stop-color="#F8D5DF"/><stop offset=".55" stop-color="#E7A0BF"/><stop offset="1" stop-color="#AD386A"/></linearGradient>
+  <linearGradient id="right" x1="0" x2="1" y1="0" y2="1"><stop stop-color="#9E1D59"/><stop offset=".55" stop-color="#CF598C"/><stop offset="1" stop-color="#F6C8D8"/></linearGradient>
+  <linearGradient id="wine" x1="0" x2="1" y1="1" y2="0"><stop stop-color="#4B0D32"/><stop offset="1" stop-color="#B23A72"/></linearGradient>
+</defs>
+<g stroke-linejoin="round">
+  <path d="M42 193 100 123 126 153 92 193Q87 199 76 199H42Z" fill="url(#wine)"/>
+  <path d="M134 118 172 66Q177 60 186 60H213L158 128Z" fill="url(#back)"/>
+  <path d="M107 87H128Q139 87 145 96L213 193H176Q166 193 159 184L111 117Z" fill="url(#right)"/>
+  <path d="M42 61H83Q92 61 98 70L145 131 115 162Z" fill="url(#front)"/>
+</g></svg>
