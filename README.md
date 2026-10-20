@@ -24,3 +24,13 @@ A sincronização atual é por cópia completa com revisão e aviso de conflito;
 - O cadastro aberto sem confirmação por e-mail é adequado somente para o **protótipo**. Para oferecer o Ch ao público, é recomendável autenticação com e-mail verificável ou mecanismo equivalente de recuperação, CAPTCHA, limites contra abuso e revisão de segurança.
 - Nunca publique senhas, service_role ou chaves `sb_secret_...` no repositório.
 - Ao sair, o Ch pergunta antes de remover registros locais. Perfis diferentes nunca devem ser mesclados automaticamente.
+
+
+## Atualização v13 — formas de pagamento
+
+- Chat pergunta **débito, Pix ou crédito** para cada gasto.
+- Débito/Pix reduzem as movimentações de conta; crédito registra previsão na fatura.
+- Cadastre **1/10**, **4/10** ou **1/1** diretamente em Cartões e parcelas.
+- **Pagar fatura** registra a saída da conta sem duplicar gastos nas categorias.
+- Meses e datas exibidos representam **valores informados**, não extratos bancários.
+- Faça backup JSON antes de usar a nova versão ou alterar compras existentes.
