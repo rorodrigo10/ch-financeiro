@@ -48,7 +48,7 @@ const displayAuth = signed => {
  $c('chCloudAuth').classList.remove('hidden');
  $c('chCloudLoginForm').classList.toggle('hidden',signed);
  $c('chCloudSignedIn').classList.toggle('hidden',!signed);
- $c('chCloudUser').textContent = signed ? (currentUser?.email||'Conta autenticada') : '';
+ $c('chCloudUser').textContent = signed ? (currentUser?.email==='rodrigo@ch-financeiro.example.com'?'Rodrigo':(currentUser?.email||'Conta autenticada')) : '';
  $c('chAccountOpen').classList.toggle('hidden',signed);
 };
 const storePayload = () => JSON.parse(JSON.stringify({transactions:state.transactions,messages:state.messages,fixed:state.fixed,goals:state.goals,purchases:state.purchases}));
